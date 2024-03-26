@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"mokey-lang/ast"
 	"mokey-lang/lexer"
 	"mokey-lang/token"
@@ -29,6 +30,11 @@ func New(l *lexer.Lexer) *Parser {
 
 func (p *Parser) Errors() []string {
 	return p.errors
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, go %s instead", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
 
 func (p *Parser) nextToken() {
@@ -94,6 +100,7 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		p.nextToken()
 		return true
 	} else {
+		p.peekError(t)
 		return false
 	}
 }
